@@ -13,16 +13,24 @@ export default function Gastos() {
   const [valor, setValor] = useState("");
   const [gastos, setGastos] = useState<Gasto[]>([]);
 
-  function adicionarGasto() {
+  async function adicionarGasto() {
     if (!nome || !valor) return;
 
-    const novoGasto: Gasto = {
-      id: Date.now(),
-      nome,
-      valor: Number(valor),
-    };
+    const res = await fetch("/api/gastos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome,
+        valor,
+      }),
+    });
+
+    const novoGasto = await res.json();
 
     setGastos([...gastos, novoGasto]);
+
     setNome("");
     setValor("");
   }
