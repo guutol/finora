@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Gasto = {
   id: number;
@@ -39,6 +39,17 @@ export default function Gastos() {
     const novaLista = gastos.filter((gasto) => gasto.id !== id);
     setGastos(novaLista);
   }
+
+  useEffect(() => {
+    async function carregarGastos() {
+      const res = await fetch("/api/gastos");
+      const data = await res.json();
+
+      setGastos(data);
+    }
+
+    carregarGastos();
+  }, []);
 
   return (
     <main className="flex flex-col gap-6 p-6">

@@ -12,3 +12,9 @@ export async function POST(req: Request) {
 
   return Response.json(gasto);
 }
+
+export async function GET() {
+  const gastos = await prisma.gasto.findMany();
+
+  return Response.json(gastos);
+}
