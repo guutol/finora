@@ -35,7 +35,15 @@ export default function Gastos() {
     setValor("");
   }
 
-  function removerGasto(id: number) {
+  async function removerGasto(id: number) {
+    await fetch("/api/gastos", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
     const novaLista = gastos.filter((gasto) => gasto.id !== id);
     setGastos(novaLista);
   }

@@ -18,3 +18,15 @@ export async function GET() {
 
   return Response.json(gastos);
 }
+
+export async function DELETE(req: Request) {
+  const body = await req.json();
+
+  await prisma.gasto.delete({
+    where: {
+      id: body.id,
+    },
+  });
+
+  return Response.json({ message: "Gasto removido com sucesso" });
+}
