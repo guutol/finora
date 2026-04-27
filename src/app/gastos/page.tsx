@@ -12,24 +12,48 @@ export default function Gastos() {
   const [nome, setNome] = useState("");
   const [valor, setValor] = useState("");
   const [gastos, setGastos] = useState<Gasto[]>([]);
+  const [gastoEditandoId, setGastoEditandoId] = useState<number | null>(null);
 
-  async function adicionarGasto() {
+  async function salvarGasto() {
     if (!nome || !valor) return;
 
-    const res = await fetch("/api/gastos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nome,
-        valor,
-      }),
-    });
+    if (gastoEditandoId) {
+      const res = await fetch("/api/gastos", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: gastoEditandoId,
+          nome,
+          valor,
+        }),
+      });
 
-    const novoGasto = await res.json();
+      const gastoAtualizado = await res.json();
 
-    setGastos([...gastos, novoGasto]);
+      setGastos(
+        gastos.map((gasto) =>
+          gasto.id === gastoEditandoId ? gastoAtualizado : gasto,
+        ),
+      );
+
+      setGastoEditandoId(null);
+    } else {
+      const res = await fetch("/api/gastos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome,
+          valor,
+        }),
+      });
+
+      const novoGasto = await res.json();
+      setGastos([...gastos, novoGasto]);
+    }
 
     setNome("");
     setValor("");
@@ -59,6 +83,12 @@ export default function Gastos() {
     carregarGastos();
   }, []);
 
+  function editarGasto(gasto: Gasto) {
+    setNome(gasto.nome);
+    setValor(gasto.valor.toString());
+    setGastoEditandoId(gasto.id);
+  }
+
   return (
     <main className="flex flex-col gap-6 p-6">
       <h1 className="text-3xl font-bold">Gastos</h1>
@@ -81,7 +111,7 @@ export default function Gastos() {
 
         <button
           className="rounded-lg bg-black px-4 py-2 text-white"
-          onClick={adicionarGasto}
+          onClick={salvarGasto}
         >
           Adicionar gasto
         </button>
@@ -102,8 +132,15 @@ export default function Gastos() {
                 <span>R$ {gasto.valor.toFixed(2)}</span>
 
                 <button
-                  className="text-red-500"
+                  onClick={() => editarGasto(gasto)}
+                  className="text-blue-500"
+                >
+                  Editar
+                </button>
+
+                <button
                   onClick={() => removerGasto(gasto.id)}
+                  className="text-red-500"
                 >
                   Remover
                 </button>
