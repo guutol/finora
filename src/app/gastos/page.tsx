@@ -29,9 +29,14 @@ export default function Gastos() {
         body: JSON.stringify({
           id: gastoEditandoId,
           nome,
-          valor,
+          valor: Number(valor),
         }),
       });
+
+      if (!res.ok) {
+        console.log("Erro ao atualizar gasto");
+        return;
+      }
 
       const gastoAtualizado = await res.json();
 
@@ -50,11 +55,17 @@ export default function Gastos() {
         },
         body: JSON.stringify({
           nome,
-          valor,
+          valor: Number(valor),
         }),
       });
 
+      if (!res.ok) {
+        console.log("Erro ao salvar gasto");
+        return;
+      }
+
       const novoGasto = await res.json();
+
       setGastos([...gastos, novoGasto]);
     }
 
@@ -116,7 +127,7 @@ export default function Gastos() {
           className="rounded-lg bg-black px-4 py-2 text-white"
           onClick={salvarGasto}
         >
-          Adicionar gasto
+          {gastoEditandoId ? "Salvar edição" : "Adicionar gasto"}
         </button>
       </section>
 
@@ -127,13 +138,13 @@ export default function Gastos() {
           {gastos.map((gasto) => (
             <li
               key={gasto.id}
-              className="flex justify-between items-center border-b pb-2"
+              className="flex items-center justify-between border-b pb-2"
             >
               <span>
                 {gasto.nome} ({gasto.categoria.nome})
               </span>
 
-              <div className="flex gap-4 items-center">
+              <div className="flex items-center gap-4">
                 <span>R$ {gasto.valor.toFixed(2)}</span>
 
                 <button
