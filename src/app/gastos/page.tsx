@@ -6,6 +6,9 @@ type Gasto = {
   id: number;
   nome: string;
   valor: number;
+  categoria: {
+    nome: string;
+  };
 };
 
 export default function Gastos() {
@@ -126,7 +129,9 @@ export default function Gastos() {
               key={gasto.id}
               className="flex justify-between items-center border-b pb-2"
             >
-              <span>{gasto.nome}</span>
+              <span>
+                {gasto.nome} ({gasto.categoria.nome})
+              </span>
 
               <div className="flex gap-4 items-center">
                 <span>R$ {gasto.valor.toFixed(2)}</span>

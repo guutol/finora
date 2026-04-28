@@ -28,7 +28,11 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const gastos = await prisma.gasto.findMany();
+  const gastos = await prisma.gasto.findMany({
+    include: {
+      categoria: true,
+    },
+  });
 
   return Response.json(gastos);
 }
