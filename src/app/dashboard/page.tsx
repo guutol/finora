@@ -14,6 +14,11 @@ export default async function Dashboard() {
     return total + gasto.valor;
   }, 0);
 
+  const config = await prisma.config.findFirst();
+
+  const salario = config?.salario || 0;
+  const saldo = salario - totalGasto;
+
   const gastosPorCategoria = gastos.reduce(
     (acc, gasto) => {
       const categoria = gasto.categoria?.nome || "Sem categoria";
@@ -26,7 +31,7 @@ export default async function Dashboard() {
 
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   return (
@@ -36,14 +41,12 @@ export default async function Dashboard() {
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-xl border p-4">
           <p className="text-sm text-gray-500">Saldo total</p>
-          <strong className="text-2xl">R$ 1.000,00</strong>
+          <strong className="text-2xl">R$ {saldo.toFixed(2)}</strong>
         </div>
 
         <div className="rounded-xl border p-4">
           <p className="text-sm text-gray-500">Total gasto</p>
-          <strong className="text-2xl">
-            R$ {totalGasto.toFixed(2)}
-          </strong>
+          <strong className="text-2xl">R$ {totalGasto.toFixed(2)}</strong>
         </div>
       </section>
 
